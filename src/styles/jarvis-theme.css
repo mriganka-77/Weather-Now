@@ -1,0 +1,277 @@
+@keyframes glow {
+  0%, 100% { opacity: 0.8; filter: drop-shadow(0 0 5px hsl(var(--jarvis-primary))); }
+  50% { opacity: 1; filter: drop-shadow(0 0 20px hsl(var(--jarvis-primary))); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); filter: brightness(1); }
+  50% { transform: scale(1.05); filter: brightness(1.2); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes scan {
+  0% { 
+    background-position: -200% 0;
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% { 
+    background-position: 200% 0;
+    opacity: 0;
+  }
+}
+
+@keyframes radar {
+  0% {
+    transform: rotate(0deg);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(360deg);
+    opacity: 0;
+  }
+}
+
+@keyframes dataStream {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 0 -1000px;
+  }
+}
+
+@keyframes hologramFlicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.97; }
+  25%, 75% { opacity: 0.85; }
+}
+
+:root {
+  --jarvis-primary: 199 85% 65%;     /* Sky blue */
+  --jarvis-secondary: 200 80% 45%;   /* Darker sky blue */
+  --jarvis-accent: 190 85% 70%;      /* Light sky blue */
+  --jarvis-warning: 45 100% 50%;     /* Warning yellow */
+  --jarvis-error: 0 100% 50%;        /* Error red */
+  --jarvis-success: 120 100% 50%;    /* Success green */
+  --jarvis-text: 0 0% 100%;          /* White */
+  --jarvis-surface: 200 40% 25%;     /* Sky blue-gray */
+  --jarvis-overlay: 200 40% 20%;     /* Darker sky blue-gray */
+  
+  --hologram-glow: 0 0 20px hsl(var(--jarvis-primary) / 0.5),
+                  0 0 40px hsl(var(--jarvis-primary) / 0.3);
+  
+  --glass-border: 1px solid hsl(var(--jarvis-primary) / 0.2);
+  --glass-shadow: 0 8px 32px 0 hsl(var(--jarvis-primary) / 0.1);
+  
+  --scanning-line: linear-gradient(
+    90deg,
+    transparent,
+    hsl(var(--jarvis-primary) / 0.2),
+    transparent
+  );
+
+  --data-stream: repeating-linear-gradient(
+    0deg,
+    hsl(var(--jarvis-primary) / 0.1) 0%,
+    hsl(var(--jarvis-primary) / 0.1) 1px,
+    transparent 1px,
+    transparent 10px
+  );
+
+  --radar-sweep: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    hsl(var(--jarvis-primary) / 0.2) 20deg,
+    transparent 40deg
+  );
+
+  --hologram-noise: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+.jarvis-theme {
+  background: linear-gradient(
+    135deg,
+    hsl(var(--jarvis-surface)),
+    hsl(var(--jarvis-overlay))
+  );
+  color: hsl(var(--jarvis-text));
+  min-height: 100vh;
+  position: relative;
+}
+
+.jarvis-theme::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: var(--data-stream);
+  opacity: 0.05;
+  animation: dataStream 20s linear infinite;
+  pointer-events: none;
+}
+
+.jarvis-card {
+  background: linear-gradient(
+    135deg,
+    hsl(var(--jarvis-surface) / 0.7),
+    hsl(var(--jarvis-overlay) / 0.7)
+  );
+  backdrop-filter: blur(12px);
+  border: var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative;
+  animation: hologramFlicker 2s infinite;
+}
+
+.jarvis-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: var(--scanning-line);
+  animation: scan 3s linear infinite;
+}
+
+.jarvis-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: var(--hologram-noise);
+  opacity: 0.02;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+
+.jarvis-radar {
+  position: relative;
+}
+
+.jarvis-radar::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 200%;
+  height: 200%;
+  transform: translate(-50%, -50%);
+  background-image: var(--radar-sweep);
+  animation: radar 4s linear infinite;
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.jarvis-status {
+  position: relative;
+  padding-left: 1rem;
+}
+
+.jarvis-status::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: hsl(var(--jarvis-primary));
+  animation: pulse 2s infinite;
+}
+
+.jarvis-status.warning::before {
+  background: hsl(var(--jarvis-warning));
+}
+
+.jarvis-status.error::before {
+  background: hsl(var(--jarvis-error));
+}
+
+.jarvis-status.success::before {
+  background: hsl(var(--jarvis-success));
+}
+
+.jarvis-text-glow {
+  color: hsl(var(--jarvis-primary));
+  text-shadow: var(--hologram-glow);
+  animation: glow 2s ease-in-out infinite;
+}
+
+.jarvis-border-glow {
+  border: 1px solid hsl(var(--jarvis-primary));
+  box-shadow: var(--hologram-glow);
+}
+
+.jarvis-icon {
+  color: hsl(var(--jarvis-primary));
+  filter: drop-shadow(0 0 8px hsl(var(--jarvis-primary) / 0.5));
+}
+
+.jarvis-button {
+  background: linear-gradient(
+    45deg,
+    hsl(var(--jarvis-primary)),
+    hsl(var(--jarvis-accent))
+  );
+  border: none;
+  color: hsl(var(--jarvis-text));
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.jarvis-button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--hologram-glow);
+}
+
+.jarvis-floating {
+  animation: float 3s ease-in-out infinite;
+}
+
+.jarvis-pulse {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* HUD-style elements */
+.jarvis-hud {
+  position: relative;
+  padding: 1rem;
+}
+
+.jarvis-hud::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 20px;
+  height: 20px;
+  border-top: 2px solid hsl(var(--jarvis-primary));
+  border-left: 2px solid hsl(var(--jarvis-primary));
+}
+
+.jarvis-hud::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 20px;
+  height: 20px;
+  border-bottom: 2px solid hsl(var(--jarvis-primary));
+  border-right: 2px solid hsl(var(--jarvis-primary));
+}
